@@ -1,6 +1,5 @@
 import { Link, useLoaderData } from "react-router-dom";
-// import { getUsers } from "../api/users";
-import axios from "axios";
+import { getUsers } from "../api/users";
 
 // eslint-disable-next-line react-refresh/only-export-components
 function UserList() {
@@ -35,9 +34,7 @@ function UserList() {
 }
 
 function loader({ request: { signal } }) {
-  return axios
-    .get("http://localhost:3000/users", { signal })
-    .then((res) => res.data);
+  return getUsers({ signal });
 }
 
 export const userListLoader = {

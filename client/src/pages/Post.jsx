@@ -1,5 +1,5 @@
 import { useLoaderData } from "react-router-dom";
-import axios from "axios";
+import { getPost } from "../api/posts";
 
 // eslint-disable-next-line react-refresh/only-export-components
 function Post() {
@@ -16,9 +16,7 @@ function Post() {
 }
 
 async function loader({ request: { signal }, params }) {
-  return axios
-    .get(`http://localhost:3000/posts/${params.postId}`, { signal })
-    .then((res) => res.data);
+  return getPost({ signal }, params);
 }
 
 export const postRoute = {

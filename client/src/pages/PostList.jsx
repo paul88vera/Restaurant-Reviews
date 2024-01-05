@@ -1,13 +1,11 @@
 /*eslint-disabled */
 import { Link, useLoaderData } from "react-router-dom";
-// import axios from "axios";
 import { getPosts } from "../api/posts";
 
 // eslint-disable-next-line react-refresh/only-export-components
 function PostList() {
   const post = useLoaderData();
 
-  console.log(post);
   if (!post) {
     // You might want to add a loading state or handle the case when user is still loading
     return <p>Loading...</p>;
@@ -38,9 +36,6 @@ function PostList() {
 
 function loader({ request: { signal } }) {
   return getPosts({ signal });
-  // return axios
-  //   .get("http://localhost:3000/posts", { signal })
-  //   .then((res) => res.data);
 }
 
 export const postListLoader = {

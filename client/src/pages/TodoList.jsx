@@ -1,6 +1,5 @@
 import { useLoaderData } from "react-router-dom";
-// import { getTodos } from "../api/todos";
-import axios from "axios";
+import { getTodos } from "../api/todos";
 
 // eslint-disable-next-line react-refresh/only-export-components
 function TodoList() {
@@ -29,9 +28,10 @@ function TodoList() {
 }
 
 function loader({ request: { signal } }) {
-  return axios
-    .get("http://localhost:3000/todos", { signal })
-    .then((res) => res.data);
+  return getTodos({ signal });
+  // return axios
+  //   .get("http://localhost:3000/todos", { signal })
+  //   .then((res) => res.data);
 }
 
 export const todoListLoader = {

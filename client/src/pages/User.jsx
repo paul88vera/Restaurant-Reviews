@@ -1,5 +1,5 @@
-import axios from "axios";
 import { useLoaderData } from "react-router";
+import { getUser } from "../api/users";
 
 // eslint-disable-next-line react-refresh/only-export-components
 function User() {
@@ -24,9 +24,7 @@ function User() {
 }
 
 function loader({ request: { signal }, params }) {
-  return axios
-    .get(`http://localhost:3000/users/${params.userId}`, { signal })
-    .then((res) => res.data);
+  return getUser({ signal }, params);
 }
 
 export const userRoute = {
