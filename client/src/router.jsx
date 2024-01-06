@@ -7,6 +7,7 @@ import { userRoute } from "./pages/User";
 import Error from "./pages/Error";
 import RootLayout from "./layouts/RootLayout";
 import ErrorMessage from "./pages/ErrorMessage";
+// import NewTodo from "./pages/NewTodo";
 
 export const router = createBrowserRouter([
   {
@@ -36,6 +37,7 @@ export const router = createBrowserRouter([
             index: true,
             ...todoListLoader,
           },
+          // { path: "/new", index: true, element: <NewTodo /> },
         ],
       },
       {

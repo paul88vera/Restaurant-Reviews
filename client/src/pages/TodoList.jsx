@@ -1,5 +1,6 @@
-import { useLoaderData } from "react-router-dom";
+import { Form, Link, useLoaderData } from "react-router-dom";
 import { getTodos } from "../api/todos";
+import TodoItem from "../components/TodoItem";
 
 // eslint-disable-next-line react-refresh/only-export-components
 function TodoList() {
@@ -11,17 +12,30 @@ function TodoList() {
   }
   return (
     <>
-      <h1 className="page-title">TodoList</h1>
+      <h1 className="page-title mb-2">
+        Todo
+        <div className="title-btns">
+          <Link to="/new" className="btn">
+            New
+          </Link>
+        </div>
+      </h1>
+
+      <Form className="form">
+        <div className="form-row">
+          <div className="form-group">
+            <label htmlFor="query">Search</label>
+            <input type="search" name="query" id="query" />
+          </div>
+          <button className="btn">Search</button>
+        </div>
+      </Form>
+
       <ul>
         {/* Adding all todos - Completed & Not Completed */}
-        {todos &&
-          todos.map((data) => (
-            <li
-              key={data.id}
-              className={data.completed ? "strike-through" : undefined}>
-              {data.title}
-            </li>
-          ))}
+        {todos.map((data) => (
+          <TodoItem key={data.id} {...data} />
+        ))}
       </ul>
     </>
   );
@@ -29,9 +43,6 @@ function TodoList() {
 
 function loader({ request: { signal } }) {
   return getTodos({ signal });
-  // return axios
-  //   .get("http://localhost:3000/todos", { signal })
-  //   .then((res) => res.data);
 }
 
 export const todoListLoader = {

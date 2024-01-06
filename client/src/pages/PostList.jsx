@@ -1,6 +1,7 @@
 /*eslint-disabled */
 import { Link, useLoaderData } from "react-router-dom";
 import { getPosts } from "../api/posts";
+import PostCard from "../components/PostCard";
 
 // eslint-disable-next-line react-refresh/only-export-components
 function PostList() {
@@ -15,20 +16,9 @@ function PostList() {
       <h1 className="page-title">PostList</h1>
       <div className="card-grid">
         {/* an ALL POSTS map */}
-        {post &&
-          post.map((data) => (
-            <div className="card" key={data.id}>
-              <div className="card-header">{data.title}</div>
-              <div className="card-body">
-                <div className="card-preview-text">{data.body}</div>
-              </div>
-              <div className="card-footer">
-                <Link to={`/posts/${data.id}`} className="btn">
-                  View
-                </Link>
-              </div>
-            </div>
-          ))}
+        {post.map((data) => (
+          <PostCard key={data.id} {...data} Link={Link} />
+        ))}
       </div>
     </>
   );

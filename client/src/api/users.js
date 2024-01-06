@@ -1,9 +1,9 @@
 import { baseApi } from "./base";
 
-export const getUsers = (options) => {
+export function getUsers(options) {
   return baseApi.get("users", options).then((res) => res.data);
-};
+}
 
-export const getUser = (options, params) => {
-  return baseApi.get(`users/${params.userId}`, options).then((res) => res.data);
-};
+export function getUser(userId, options) {
+  return baseApi.get(`users/${userId}`, options).then((res) => res.data);
+}
