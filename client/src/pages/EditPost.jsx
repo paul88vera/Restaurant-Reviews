@@ -1,59 +1,63 @@
-import { useLoaderData } from "react-router";
-import { getPost } from "../api/posts";
+import {
+  redirect,
+  useActionData,
+  useLoaderData,
+  useNavigation,
+} from "react-router";
+import { getPost, updatePost } from "../api/posts";
+import { getUsers } from "../api/users";
+import PostForm, { postFormValidator } from "../components/PostForm";
 
 export default function EditPost() {
-  const edit = useLoaderData();
+  const { users, post } = useLoaderData();
+  const { state } = useNavigation();
+  const errors = useActionData();
+
+  const isSubmitting = state === "submitting";
+
   return (
     <>
       <h1 className="page-title">Edit Post</h1>
-      <form method="post" action={`/posts/${edit.id}/edit`} className="form">
-        <div className="form-row">
-          <div className="form-group">
-            <label htmlFor="title">{edit.title}</label>
-            <input type="text" name="title" id="title" value="qui est esse" />
-          </div>
-          <div className="form-group">
-            <label htmlFor="userId">{edit.user}</label>
-            <select name="userId" id="userId">
-              <option value="1">Leanne Graham</option>
-              <option value="2">Ervin Howell</option>
-              <option value="3" selected="">
-                Clementine Bauch
-              </option>
-              <option value="4">Patricia Lebsack</option>
-              <option value="5">Chelsey Dietrich</option>
-              <option value="6">Mrs. Dennis Schulist</option>
-              <option value="7">Kurtis Weissnat</option>
-              <option value="8">Nicholas Runolfsdottir V</option>
-              <option value="9">Glenna Reichert</option>
-              <option value="10">Clementina DuBuque</option>
-            </select>
-          </div>
-        </div>
-        <div className="form-row">
-          <div className="form-group">
-            <label htmlFor="body">Body</label>
-            <textarea name="body" id="body">
-              {edit.body}
-            </textarea>
-          </div>
-        </div>
-        <div className="form-row form-btn-row">
-          <a className="btn btn-outline" href={`/posts/${edit.id}`}>
-            Cancel
-          </a>
-          <button className="btn">Save</button>
-        </div>
-      </form>
+      <PostForm
+        users={users}
+        defaultValues={post}
+        isSubmitting={isSubmitting}
+        errors={errors}
+      />
     </>
   );
 }
 
-function loader({ request: { signal }, params: { postId } }) {
-  return getPost(postId, { signal });
+async function action({ request, params: { postId } }) {
+  const formData = await request.formData();
+  const title = formData.get("title");
+  const body = formData.get("body");
+  const userId = formData.get("userId");
+
+  const errors = postFormValidator({ title, body, userId });
+
+  if (Object.keys(errors).length > 0) {
+    return errors;
+  }
+
+  const post = await updatePost(
+    postId,
+    { title, body, userId },
+    { signal: request.signal }
+  );
+
+  return redirect(`/posts/${post.id}`);
+}
+
+async function loader({ request: { signal }, params: { postId } }) {
+  const post = getPost(postId, { signal });
+  const users = getUsers({ signal });
+
+  return { post: await post, users: await users };
 }
 
 export const postEdit = {
   loader,
+  action,
   element: <EditPost />,
 };

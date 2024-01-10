@@ -1,11 +1,27 @@
 /*eslint-disabled */
-import { Link, useLoaderData } from "react-router-dom";
+import { Form, Link, useLoaderData } from "react-router-dom";
 import { getPosts } from "../api/posts";
 import PostCard from "../components/PostCard";
+import FormGroup from "../components/FormGroup";
+import { getUsers } from "../api/users";
+import { useEffect, useRef } from "react";
 
 // eslint-disable-next-line react-refresh/only-export-components
 function PostList() {
-  const post = useLoaderData();
+  const {
+    users,
+    post,
+    searchParams: { query, userId },
+  } = useLoaderData();
+  const queryRef = useRef();
+  const userIdRef = useRef();
+
+  useEffect(() => {
+    queryRef.current.value = query || "";
+  }, [query]);
+  useEffect(() => {
+    userIdRef.current.value = userId || "";
+  }, [userId]);
 
   if (!post) {
     // You might want to add a loading state or handle the case when user is still loading
@@ -16,36 +32,31 @@ function PostList() {
       <h1 className="page-title">
         PostList
         <div className="title-btns">
-          <a className="btn btn-outline" href="/posts/new">
+          <Link className="btn btn-outline" to="/posts/new">
             New
-          </a>
+          </Link>
         </div>
       </h1>
-      <form method="get" action="/posts" className="form mb-4">
+      <Form method="get" className="form mb-4">
         <div className="form-row">
           <div className="form-group">
             <label htmlFor="query">Query</label>
-            <input type="search" name="query" id="query" />
+            <input type="search" name="query" id="query" ref={queryRef} />
           </div>
-          <div className="form-group">
+          <FormGroup>
             <label htmlFor="userId">Author</label>
-            <select type="search" name="userId" id="userId">
+            <select type="search" name="userId" id="userId" ref={userIdRef}>
               <option value="">Any</option>
-              <option value="1">Leanne Graham</option>
-              <option value="2">Ervin Howell</option>
-              <option value="3">Clementine Bauch</option>
-              <option value="4">Patricia Lebsack</option>
-              <option value="5">Chelsey Dietrich</option>
-              <option value="6">Mrs. Dennis Schulist</option>
-              <option value="7">Kurtis Weissnat</option>
-              <option value="8">Nicholas Runolfsdottir V</option>
-              <option value="9">Glenna Reichert</option>
-              <option value="10">Clementina DuBuque</option>
+              {users.map((user) => (
+                <option value={user.id} key={user.id}>
+                  {user.name}
+                </option>
+              ))}
             </select>
-          </div>
+          </FormGroup>
           <button className="btn">Filter</button>
         </div>
-      </form>
+      </Form>
       <div className="card-grid">
         {/* an ALL POSTS map */}
         {post.map((data) => (
@@ -56,8 +67,20 @@ function PostList() {
   );
 }
 
-function loader({ request: { signal } }) {
-  return getPosts({ signal });
+async function loader({ request: { signal, url } }) {
+  const searchParams = new URL(url).searchParams;
+  const query = searchParams.get("query");
+  const userId = searchParams.get("userId");
+  const filterParams = { q: query };
+  if (userId !== "") filterParams.userId = userId;
+  const post = await getPosts({ signal, params: filterParams });
+  const users = getUsers({ signal });
+
+  return {
+    post: await post,
+    users: await users,
+    searchParams: { query, userId },
+  };
 }
 
 export const postListLoader = {
