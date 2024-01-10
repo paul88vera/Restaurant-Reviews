@@ -7,7 +7,9 @@ import { userRoute } from "./pages/User";
 import Error from "./pages/Error";
 import RootLayout from "./layouts/RootLayout";
 import ErrorMessage from "./pages/ErrorMessage";
-// import NewTodo from "./pages/NewTodo";
+import { postEdit } from "./pages/EditPost";
+import NewPost from "./pages/NewPost";
+// import NewPost from "./pages/NewPost";
 
 export const router = createBrowserRouter([
   {
@@ -22,7 +24,12 @@ export const router = createBrowserRouter([
             path: "posts",
             children: [
               { index: true, ...postListLoader },
-              { path: ":postId", ...postRoute },
+              {
+                path: ":postId",
+                ...postRoute,
+                children: [{ path: "edit", ...postEdit }],
+              },
+              { path: "new", element: <NewPost /> },
             ],
           },
           {

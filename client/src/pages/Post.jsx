@@ -9,7 +9,13 @@ function Post() {
   return (
     <>
       <div>
-        <h1 className="page-title">{post.title}</h1>
+        <h1 className="page-title">{post.title}
+        <div className="title-btns">
+          <a className="btn btn-outline" href={`/posts/${post.id}/edit`}>
+            Edit
+          </a>
+        </div>
+        </h1>
         <span className="page-subtitle">
           By: <Link to={`/users/${user.id}`}>{user.name}</Link>
         </span>
